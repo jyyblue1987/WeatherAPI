@@ -4,6 +4,12 @@ import json
 
 print("Start Program")
 
+def printLine(items):
+    for item in items:
+        print(item.ljust(15), end='')
+
+    print('')
+
 # Connect database
 mydb = mysql.connector.connect(
       host="localhost",
@@ -84,8 +90,15 @@ while(True):
 
             myresult = mycursor.fetchall()
 
+            printLine(['ID', 'Name', 'Lat', 'Lon', 'Main', 'Temperature', 'Min Temp', 'Max Temp', 'Pressure', 'Humidity', 'Visibility', 'Speed', 'Degree', 'Cloud'])
+
             for x in myresult:
-                print(x)
+                # print(x)
+                row = json.loads(x[2])
+                printLine([str(row['id']), row['name'], str(row['coord']['lat']), str(row['coord']['lon']), str(row['weather'][0]['main']),  str(row['main']['temp']),
+                           str(row['main']['temp_min']), str(row['main']['temp_max']), str(row['main']['pressure']), str(row['main']['humidity']),
+                           str(row['visibility']), str(row['wind']['speed']), str(row['wind']['deg']), str(row['clouds']['all'])])
+
 
         except Exception as e:
             print(e)
