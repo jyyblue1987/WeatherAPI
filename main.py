@@ -1,6 +1,22 @@
 import requests
+import mysql.connector
 
 print("Start Program")
+
+# Connect database
+mydb = mysql.connector.connect(
+      host="localhost",
+      user="root",
+      password=""
+)
+mycursor = mydb.cursor()
+
+# create database
+mycursor.execute("CREATE DATABASE IF NOT EXISTS weather")
+mycursor.execute("USE weather")
+
+# create table
+mycursor.execute("CREATE TABLE IF NOT EXISTS `history` ( `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `content` TEXT, PRIMARY KEY (`id`) )")
 
 API_KEY = 'eb8ba848f5d59614a31f13987ddf8e37'
 BASE_URL = 'http://api.openweathermap.org/data/2.5/weather?appid='+API_KEY
@@ -9,6 +25,7 @@ while(True):
     print('1. Find Weather Based on City')
     print('2. Find Weather Based on Zip Code')
     print('3. Find Weather Based on Geographic')
+    print('4. Save current weather')
 
     choice = int(input('Choice: '))
     if choice == 1:
