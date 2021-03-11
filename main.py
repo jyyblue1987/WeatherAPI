@@ -1,5 +1,6 @@
 import requests
 import mysql.connector
+import json
 
 print("Start Program")
 
@@ -16,16 +17,20 @@ mycursor.execute("CREATE DATABASE IF NOT EXISTS weather")
 mycursor.execute("USE weather")
 
 # create table
-mycursor.execute("CREATE TABLE IF NOT EXISTS `history` ( `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `content` TEXT, PRIMARY KEY (`id`) )")
+mycursor.execute("CREATE TABLE IF NOT EXISTS `weather` ( `id` INT(11) UNSIGNED NOT NULL, `name` VARCHAR(50), `content` TEXT, PRIMARY KEY (`id`) )")
 
 API_KEY = 'eb8ba848f5d59614a31f13987ddf8e37'
 BASE_URL = 'http://api.openweathermap.org/data/2.5/weather?appid='+API_KEY
+current_data = {}
+
 while(True):
     print('0: Exit')
     print('1. Find Weather Based on City')
     print('2. Find Weather Based on Zip Code')
     print('3. Find Weather Based on Geographic')
     print('4. Save current weather')
+    print('5. Display weather from database')
+    print('6. Display weather from database alphabetically')
 
     choice = int(input('Choice: '))
     if choice == 1:
@@ -50,7 +55,37 @@ while(True):
         if res.status_code != 200:
             print('Invalid Input')
         else:
-            data = res.json()
-            print(data)
+            current_data = res.json()
+            print(current_data)
 
 
+    if choice == 4:
+        if current_data:
+            try:
+                result = json.dumps(current_data)
+                sql = "INSERT INTO weather (id, name, content) VALUES (" + str(current_data['id']) + ", '" + current_data['name'] + "', '" + result + "')"
+                mycursor.execute(sql)
+                mydb.commit()
+
+                print("Weather Data is saved successfully")
+            except Exception as e:
+                print(e)
+        else:
+            print("There is no data for saving")
+
+
+    if choice == 5 or choice == 6:
+        try:
+            sql = "Select * From weather"
+            if choice == 6:
+                sql = sql + " order by name"
+
+            mycursor.execute(sql)
+
+            myresult = mycursor.fetchall()
+
+            for x in myresult:
+                print(x)
+
+        except Exception as e:
+            print(e)
