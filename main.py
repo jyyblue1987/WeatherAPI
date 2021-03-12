@@ -62,7 +62,15 @@ while(True):
             print('Invalid Input')
         else:
             current_data = res.json()
-            print(current_data)
+            # print(current_data)
+
+            row = current_data
+            printLine(['ID', 'Name', 'Lat', 'Lon', 'Main', 'Temperature', 'Min Temp', 'Max Temp', 'Pressure', 'Humidity', 'Visibility', 'Speed', 'Degree', 'Cloud'])
+            printLine([str(row['id']), row['name'], str(row['coord']['lat']), str(row['coord']['lon']),
+                       str(row['weather'][0]['main']), str(row['main']['temp']),
+                       str(row['main']['temp_min']), str(row['main']['temp_max']), str(row['main']['pressure']),
+                       str(row['main']['humidity']),
+                       str(row['visibility']), str(row['wind']['speed']), str(row['wind']['deg']), str(row['clouds']['all'])])
 
 
     if choice == 4:
